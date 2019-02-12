@@ -107,6 +107,14 @@
   find Charlie Betsy
 
 ##########################################################
+# test update person command
+##########################################################
+
+  #update the person
+  update Charlie Dickson pp/333334 e/charlie.d@nus.edu.sg a/333, gamma street t/friends t/school
+  view
+
+##########################################################
 # test delete person command
 ##########################################################
 

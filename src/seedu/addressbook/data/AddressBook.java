@@ -39,6 +39,15 @@ public class AddressBook {
     }
 
     /**
+     * Update a person with the same name but different phone, email, address or tag.
+     * 
+     * @param toupdate the person you want to update with new details.
+     */
+    public void updatePerson(Person toupdate) {
+        allPersons.update(toupdate);
+    }
+
+    /**
      * Returns true if an equivalent person exists in the address book.
      */
     public boolean containsPerson(ReadOnlyPerson key) {

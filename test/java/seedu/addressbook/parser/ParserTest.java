@@ -198,6 +198,103 @@ public class ParserTest {
     }
 
     /*
+     * Tests for update person command ==============================================================================
+     */
+
+    @Test
+    public void parse_updateCommandInvalidArgs_errorMessage() {
+        final String[] inputs = {
+            "update",
+            "update ",
+            "update wrong args format",
+            // no phone prefix
+            String.format("update %s %s e/%s a/%s", Name.EXAMPLE, Phone.EXAMPLE, Email.EXAMPLE, Address.EXAMPLE),
+            // no email prefix
+            String.format("update %s p/%s %s a/%s", Name.EXAMPLE, Phone.EXAMPLE, Email.EXAMPLE, Address.EXAMPLE),
+            // no address prefix
+            String.format("update %s p/%s e/%s %s", Name.EXAMPLE, Phone.EXAMPLE, Email.EXAMPLE, Address.EXAMPLE)
+        };
+        final String resultMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, UpdateCommand.MESSAGE_USAGE);
+        parseAndAssertIncorrectWithMessage(resultMessage, inputs);
+    }
+
+    @Test
+    public void parse_updateCommandInvalidPersonDataInArgs_errorMessge() {
+        final String invalidName = "[]\\[;]";
+        final String validName = Name.EXAMPLE;
+        final String invalidPhoneArg = "p/not__numbers";
+        final String validPhoneArg = "p/" + Phone.EXAMPLE;
+        final String invalidEmailArg = "e/notAnEmail123";
+        final String validEmailArg = "e/" + Email.EXAMPLE;
+        final String invalidTagArg = "t/invalid_-[.tag";
+
+        // address can be any string, so no invalid address
+        final String updateCommandFormatString = "update %s %s %s a/" + Address.EXAMPLE;
+
+        // test each incorrect person data field argument individually
+        final String[] inputs = {
+                // invalid name
+                String.format(updateCommandFormatString, invalidName, validPhoneArg, validEmailArg),
+                // invalid phone
+                String.format(updateCommandFormatString, validName, invalidPhoneArg, validEmailArg),
+                // invalid email
+                String.format(updateCommandFormatString, validName, validPhoneArg, invalidEmailArg),
+                // invalid tag
+                String.format(udateCommandFormatString, validName, validPhoneArg, validEmailArg) + " " + invalidTagArg
+        };
+        for (String input : inputs) {
+            parseAndAssertCommandType(input, IncorrectCommand.class);
+        }
+    }
+
+    @Test
+    public void parse_updateCommandValidPersonData_parsedCorrectly() {
+        final Person testPerson = generateTestPerson();
+        final String input = convertPersonToUpdateCommandString(testPerson);
+        final UpdateCommand result = parseAndAssertCommandType(input, UpdateCommand.class);
+        assertEquals(result.getPerson(), testPerson);
+    }
+
+    @Test
+    public void parse_updateCommandDuplicateTags_merged() throws IllegalValueException {
+        final Person testPerson = generateTestPerson();
+        String input = convertPersonToUpdateCommandString(testPerson);
+        for (Tag tag : testPerson.getTags()) {
+            // create duplicates by doubling each tag
+            input += " t/" + tag.tagName;
+        }
+
+        final UpdateCommand result = parseAndAssertCommandType(input, AddCommand.class);
+        assertEquals(result.getPerson(), testPerson);
+    }
+
+    private static Person generateTestPerson() {
+        try {
+            return new Person(
+                new Name(Name.EXAMPLE),
+                new Phone(Phone.EXAMPLE, true),
+                new Email(Email.EXAMPLE, false),
+                new Address(Address.EXAMPLE, true),
+                new HashSet<>(Arrays.asList(new Tag("tag1"), new Tag ("tag2"), new Tag("tag3")))
+            );
+        } catch (IllegalValueException ive) {
+            throw new RuntimeException("test person data should be valid by definition");
+        }
+    }
+
+    private static String convertPersonToUpdateCommandString(ReadOnlyPerson person) {
+        String UpdateCommand = "update "
+                + person.getName().fullName
+                + (person.getPhone().isPrivate() ? " pp/" : " p/") + person.getPhone().value
+                + (person.getEmail().isPrivate() ? " pe/" : " e/") + person.getEmail().value
+                + (person.getAddress().isPrivate() ? " pa/" : " a/") + person.getAddress().value;
+        for (Tag tag : person.getTags()) {
+            updateCommand += " t/" + tag.tagName;
+        }
+        return updateCommand;
+    }
+
+    /*
      * Tests for add person command ==============================================================================
      */
 

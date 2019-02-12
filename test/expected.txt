@@ -233,6 +233,18 @@
 || 
 || 2 persons listed!
 || ===================================================
+|| Enter command: || [Command entered:  update Charlie Dickson pp/333333 e/charlie.new@nus.edu.sg a/333, gamma street t/friends t/school]
+|| Person ipdated: Charlie Dickson Phone: (private) 333333 Email: charlie.new@nus.edu.sg Address: 333, gamma street Tags: [school][friends]
+|| ===================================================
+|| Enter command: || [Command entered:  list]
+|| 	1. Adam Brown Phone: 111111 Email: adam@gmail.com Address: 111, alpha street Tags: 
+|| 	2. Betsy Choo Tags: [secretive]
+|| 	3. Charlie Dickson Email: charlie.new@nus.edu.sg Address: 333, gamma street Tags: [school][friends]
+|| 	4. Dickson Ee Phone: 444444 Address: 444, delta street Tags: [friends]
+|| 	5. Esther Potato Phone: 555555 Email: esther@not.a.real.potato Tags: [tubers][starchy]
+|| 
+|| 5 persons listed!
+|| ===================================================
 || Enter command: || [Command entered:  delete]
 || Invalid command format! 
 || delete: Deletes the person identified by the index number used in the last person listing.

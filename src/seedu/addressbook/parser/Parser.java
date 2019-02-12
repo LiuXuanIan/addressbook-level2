@@ -22,6 +22,7 @@ import seedu.addressbook.commands.IncorrectCommand;
 import seedu.addressbook.commands.ListCommand;
 import seedu.addressbook.commands.ViewAllCommand;
 import seedu.addressbook.commands.ViewCommand;
+import seedu.addressbook.commands.UpdateCommand;
 import seedu.addressbook.data.exception.IllegalValueException;
 
 /**
@@ -76,6 +77,9 @@ public class Parser {
         case AddCommand.COMMAND_WORD:
             return prepareAdd(arguments);
 
+        case UpdateCommand.COMMAND_WORD:
+                return prepareUpdate(arguments);
+
         case DeleteCommand.COMMAND_WORD:
             return prepareDelete(arguments);
 
@@ -100,6 +104,38 @@ public class Parser {
         case HelpCommand.COMMAND_WORD: // Fallthrough
         default:
             return new HelpCommand();
+        }
+    }
+
+    /**
+     * Parses arguments in the context of the update person command.
+     *
+     * @param args full command args string
+     * @return the prepared command
+     */
+    private Command prepareUpdate(String args) {
+        final Matcher matcher = PERSON_DATA_ARGS_FORMAT.matcher(args.trim());
+        // Validate arg string format
+        if (!matcher.matches()) {
+            return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
+        }
+        try {
+            return new UpdateCommand(
+                    matcher.group("name"),
+
+                    matcher.group("phone"),
+                    isPrivatePrefixPresent(matcher.group("isPhonePrivate")),
+
+                    matcher.group("email"),
+                    isPrivatePrefixPresent(matcher.group("isEmailPrivate")),
+
+                    matcher.group("address"),
+                    isPrivatePrefixPresent(matcher.group("isAddressPrivate")),
+
+                    getTagsFromArgs(matcher.group("tagArguments"))
+            );
+        } catch (IllegalValueException ive) {
+            return new IncorrectCommand(ive.getMessage());
         }
     }
 
